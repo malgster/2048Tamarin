@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  2048tamarin:
+    container_name: '2048tamarin'
+    ports:
+      - "310:3000"
+    build:
+      context: .
+    restart: no

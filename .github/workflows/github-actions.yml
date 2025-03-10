@@ -1,0 +1,30 @@
+name: CD / Publish / Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  publish:
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: docker build . --file Dockerfile --tag 2048tamarin:${{ github.run_number }}
+
+      - name: Stop and remove existing container
+        run: |
+          docker stop 2048tamarin || true
+          docker rm 2048tamarin || true
+
+      - name: Run Docker container
+        run: docker run -d -p 310:3000 --name 2048tamarin 2048tamarin:${{ github.run_number }}
